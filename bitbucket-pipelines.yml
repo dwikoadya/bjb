@@ -1,0 +1,54 @@
+options:
+  size: 2x
+
+definitions:
+  services:
+    docker:
+      memory: 7128
+      
+image: atlassian/default-image:2
+
+pipelines:
+  branches:
+    develop:
+      - parallel:
+            - step:
+                name: Dockerfile checking
+                image: hadolint/hadolint:latest-debian
+                script:
+                  - hadolint Dockerfile
+            - step:
+                name: Docker lifecycle image
+                script:
+                  - docker system prune --force
+                  - docker rmi -f $(docker images -f "dangling=true" -q) .
+                  - IMAGE_NAME=$BITBUCKET_REPO_SLUG
+                services:
+                  - docker
+                caches:
+                  - docker
+      - step:
+          name: Build and test
+          script:
+            - IMAGE_NAME=$BITBUCKET_REPO_SLUG
+            - ENV_GROUP="REACT_APP_BASE_URI=$REACT_APP_BASE_URI REACT_APP_CLIENT_ID=$REACT_APP_CLIENT_ID REACT_APP_CLIENT_SECRET=$REACT_APP_CLIENT_SECRET"
+            - docker build . --file Dockerfile --tag ${IMAGE_NAME} --build-arg ENV_GROUP="$ENV_GROUP"
+            - docker save ${IMAGE_NAME} --output "${IMAGE_NAME}.tar"
+          services:
+            - docker
+          caches:
+            - docker
+          artifacts:
+            - "*.tar"
+      - step:
+          name: Deploy to Production
+          deployment: Production
+          script:
+            - docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASSWORD
+            - IMAGE_NAME=$BITBUCKET_REPO_SLUG
+            - docker load --input "${IMAGE_NAME}.tar"
+            - VERSION="prod-0.1.${BITBUCKET_BUILD_NUMBER}"
+            - docker tag ${IMAGE_NAME} doterb/web-areon:${VERSION}
+            - docker push doterb/web-areon:${VERSION}
+          services:
+            - docker
