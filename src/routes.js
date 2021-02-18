@@ -92,6 +92,11 @@ const routes = [
         component: lazy(() => import('views/ManagementContent/LearningCenters'))
       },
       {
+        path: '/management-content/banner',
+        exact: true,
+        component: lazy(() => import('views/ManagementContent/Banners'))
+      },
+      {
         component: () => <Redirect to="/errors/error-404" />
       }
     ]
