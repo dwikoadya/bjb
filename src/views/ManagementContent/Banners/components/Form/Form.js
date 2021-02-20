@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core';
 import { useTheme, withStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
-import { addUser, refreshStateUser } from 'actions';
+import { addBanner, refreshStateBanner } from 'actions';
 import validation from '../../validation';
 import useStyles from './form-jss';
 import palette from 'theme/palette';
@@ -41,20 +41,20 @@ function Form(props) {
   }))(Typography);
 
   useEffect(() => {
-    setCategory(watch('talk_type'))
-  }, [watch('talk_type')]);
+    setCategory(watch('category_type'))
+  }, [watch('category_type')]);
 
   useEffect(() => {
-    dispatch(refreshStateUser());
+    dispatch(refreshStateBanner());
   }, []);
 
   const onSubmit = (data) => {
-    dispatch(addUser({
+    dispatch(addBanner({
       payload: data
     }));
   };
 
-  const setPhoto = (event) => {
+  const setImage = (event) => {
     setFileHandler(event.target.files);
   };
 
@@ -68,10 +68,10 @@ function Form(props) {
     } else {
       if (success && !loading) {
         toggleModal(false);
-        dispatch(refreshStateUser());
+        dispatch(refreshStateBanner());
       }
       if (error) {
-        dispatch(refreshStateUser());
+        dispatch(refreshStateBanner());
       }
     }
   }, [success, error, loading]);
@@ -109,34 +109,34 @@ function Form(props) {
           <input
             accept="image/*"
             className={classes.file}
-            name="photo"
-            onChange={setPhoto}
-            ref={register(validation.photo)}
+            name="image"
+            onChange={setImage}
+            ref={register(validation.image)}
             type="file"
           />
         </div>
         {
-          errors.photo &&
+          errors.image &&
           <PhotoErrorText
             classes={classes.photoErrorText}
             component="p"
             variant="caption"
           >
-            {errors.photo.message}
+            {errors.image.message}
           </PhotoErrorText>
         }
       </div>
       <RadioGroup
         control={control}
-        errorMessage={errors?.talk_type?.message}
-        errors={errors.talk_type}
+        errorMessage={errors?.category_type?.message}
+        errors={errors.category_type}
         label="Kategori*"
-        name="talk_type"
+        name="category_type"
         options={[
           { label: 'Homepage', value: 'homepage' },
           { label: 'Menu DiSentra', value: 'menudisentra' }
         ]}
-        validation={validation.talk_type}
+        validation={validation.category_type}
         value={category}
       />
       {
@@ -144,10 +144,10 @@ function Form(props) {
           <RoundedInput
             defaultValue=""
             errorMessage="Nomor telepon hanya terdiri dari 10 sampai 14 nomor"
-            errors={errors.phone_number}
+            errors={errors.link}
             label="URL*"
-            name="phone_number"
-            register={register(validation.phone)}
+            name="link"
+            register={register(validation.link)}
             type="text"
           />
         ) : (
@@ -155,13 +155,29 @@ function Form(props) {
               <FormControl fullWidth>
                 <RoundedSelect
                   control={control}
-                  defaultValue={''}
-                  errorMessage={errors?.role_ids?.message}
-                  errors={errors.role_ids}
+                  defaultValue={'home'}
+                  errorMessage={errors?.banner_type?.message}
+                  errors={errors.banner_type}
                   label="Menu*"
-                  name="role_ids"
-                  options={[]}
-                  validation={validation.role_ids}
+                  name="banner_type"
+                  options={[{
+                      id: 'home',
+                      name: 'Homepage'
+                  }, {
+                      id: 'clinic',
+                      name: 'Klinik'
+                  }, {
+                      id: 'talk',
+                      name: 'Bincang Bisnis'
+                  }, {
+                      id: 'learning',
+                      name: 'Sentra Belajar'
+                  }, {
+                      id: 'umkm',
+                      name: 'Pasar UMKM'
+                  }
+                  ]}
+                  validation={validation.banner_type}
                 />
               </FormControl>
             </div>
@@ -169,16 +185,16 @@ function Form(props) {
       }
       <RadioGroup
         control={control}
-        errorMessage={errors?.active_type?.message}
-        errors={errors.active_type}
+        errorMessage={errors?.status?.message}
+        errors={errors.status}
         label="Status*"
-        name="active_type"
+        name="status"
         options={[
-          { label: 'Aktif', value: 'aktif' },
-          { label: 'Tidak Aktif', value: 'tidakaktif' }
+          { label: 'Aktif', value: 'active' },
+          { label: 'Tidak Aktif', value: 'inactive' }
         ]}
-        validation={validation.talk_type}
-        value={'video'}
+        validation={validation.status}
+        value={'active'}
       />
       <Typography
         component="p"

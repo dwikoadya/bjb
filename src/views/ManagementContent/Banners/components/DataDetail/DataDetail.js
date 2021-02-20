@@ -183,7 +183,7 @@ function DataDetail(props) {
             {
               category === 'homepage' ? (
                 <RoundedInput
-                  defaultValue={dataDetail.link}
+                  defaultValue={''}
                   errorMessage="Nomor telepon hanya terdiri dari 10 sampai 14 nomor"
                   errors={errors.link}
                   label="URL*"
@@ -196,13 +196,19 @@ function DataDetail(props) {
                     <FormControl fullWidth>
                       <RoundedSelect
                         control={control}
-                        defaultValue={''}
-                        errorMessage={errors?.role_ids?.message}
-                        errors={errors.role_ids}
+                        defaultValue={dataDetail?.banner_type}
+                        errorMessage={errors?.banner_type?.message}
+                        errors={errors.banner_type}
                         label="Menu*"
-                        name="role_ids"
-                        options={[]}
-                        validation={validation.role_ids}
+                        name="banner_type"
+                        options={[
+                          {id: 'home', name: 'Homepage'},
+                          {id: 'clinic', name: 'Klinik'},
+                          {id: 'talk', name: 'Bincang Bisnis'},
+                          {id: 'learning', name: 'Sentra Belajar'},
+                          {id: 'umkm', name: 'Pasar UMKM'}
+                        ]}
+                        validation={validation.banner_type}
                       />
                     </FormControl>
                   </div>
@@ -242,20 +248,20 @@ function DataDetail(props) {
         isEdit ? (
           <RadioGroup
             control={control}
-            errorMessage={errors?.created_at?.message}
-            errors={errors.created_at}
+            errorMessage={errors?.status?.message}
+            errors={errors.status}
             label="Status*"
-            name=""
+            name="status"
             options={[
-              { label: 'Aktif', value: 'aktif' },
-              { label: 'Tidak Aktif', value: 'tidakaktif' },
+              { label: 'Aktif', value: 'active' },
+              { label: 'Tidak Aktif', value: 'inactive' },
             ]}
-            validation={validation.created_at}
-            value={'aktif'}
+            validation={validation.status}
+            value={dataDetail?.status}
           />
         ) : (
             <FieldDisplay
-              data={dataDetail?.created_at}
+              data={dataDetail?.status}
               label="Status"
             />
           )

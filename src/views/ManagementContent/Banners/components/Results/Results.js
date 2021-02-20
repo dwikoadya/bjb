@@ -92,7 +92,7 @@ const Results = props => {
       payload: data[index]
     }))
     setShowDataDetail(true);
-  }  
+  };
 
   return (
     <div
@@ -159,7 +159,7 @@ const Results = props => {
                         {content.banner_type}
                       </TableCell>
                       <TableCell>
-                        {content.created_at}
+                        {content.status}
                       </TableCell>
                       <TableCell>
                         <Link 
